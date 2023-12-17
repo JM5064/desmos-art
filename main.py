@@ -141,9 +141,7 @@ def calculate_y_bounds(coord_set):
     return [minimum, maximum]
 
 
-def get_contour_points(con):
-    frequency = 6
-
+def get_contour_points(con, frequency):
     count = 0
     coords = []
 
@@ -173,13 +171,33 @@ def get_contour_points(con):
     return np.asarray(threes)
 
 
+def scale_points(coord_set, scale_factor):
+    scaled_points = []
+    for i in range(len(coord_set)):
+        scaled_points.append(scale_factor * coord_set[i])
+
+    return np.asarray(scaled_points)
+
+
+def shift_points(coord_set, shift_x, shift_y):
+    shifted_points = []
+    for i in range(len(coord_set)):
+        shifted_points.append([[coord_set[i][0][0] + shift_x, coord_set[i][0][1] + shift_y],
+                               [coord_set[i][1][0] + shift_x, coord_set[i][1][1] + shift_y],
+                               [coord_set[i][2][0] + shift_x, coord_set[i][2][1] + shift_y]])
+
+    return np.asarray(shifted_points)
+
+
 img = process_image(img)
 
 contours, hierarchy = cv.findContours(img, cv.RETR_TREE, cv.CHAIN_APPROX_NONE)
 
 display_image(img)
 
-points = get_contour_points(contours)
+points = get_contour_points(contours, 6)
+# points = shift_points(points, 1.9, 4)
+# points = scale_points(points, 1)
 num_equations = 0
 
 for p in points:
