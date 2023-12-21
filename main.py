@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 
-url = "images/mcgil.jpeg"
+url = "images/mcgill.jpeg"
 img = cv.imread(url)
 
 if img is None:
@@ -86,14 +86,78 @@ def calculate_x_bounds(coord_set):
     minimum = min(coord_set[0][0], coord_set[1][0], coord_set[2][0])
     maximum = max(coord_set[0][0], coord_set[1][0], coord_set[2][0])
 
-    return [minimum, maximum]
+    if coord_set[0][0] == minimum:
+        min_coord = coord_set[0]
+    elif coord_set[0][1] == minimum:
+        min_coord = coord_set[1]
+    else:
+        min_coord = coord_set[2]
+
+    return [minimum, maximum, min_coord]
 
 
 def calculate_y_bounds(coord_set):
     minimum = min(coord_set[0][1], coord_set[1][1], coord_set[2][1])
     maximum = max(coord_set[0][1], coord_set[1][1], coord_set[2][1])
 
-    return [minimum, maximum]
+    if coord_set[0][0] == maximum:
+        max_coord = coord_set[0]
+    elif coord_set[0][1] == maximum:
+        max_coord = coord_set[1]
+    else:
+        max_coord = coord_set[2]
+
+    return [minimum, maximum, max_coord]
+
+
+def determine_concavity_vertical(left, circ):
+    x, y = left[0], left[1]
+    h, k = circ[0], circ[1]
+
+    if y == k:
+        # print("0???")
+        return 0
+    if -1/(y - k) + ((x - h) ** 2) / ((y - k) ** 3) > 0:
+        # print("concave up")
+        return 1
+    elif -1/(y - k) + ((x - h) ** 2) / ((y - k) ** 3) < 0:
+        # print("concave down")
+        return -1
+    else:
+        print("huh?", left, circ)
+
+
+def determine_concavity_horizontal(upper, circ):
+    x, y = upper[0], upper[1]
+    h, k = circ[0], circ[1]
+
+    if x == h:
+        # print("0")
+        return 0
+    if -1/(x - h) - ((y - k) ** 2) / ((x - h) ** 3) > 0:
+        # print("concave right")
+        return 1
+    elif -1/(x - h) - ((y - k) ** 2) / ((x - h) ** 3) < 0:
+        # print("concave left")
+        return -1
+    else:
+        print("huh??", upper, circ)
+
+
+# determine_concavity_horizontal([2, 276], [51.5, 279.5, 2462.5])
+
+
+def remove_similar_contours(con):
+    contour1 = contours[0]
+    contour2 = contours[1]
+
+    # Calculate Hu Moments
+    moments1 = cv.moments(contour1)
+
+    moments2 = cv.moments(contour2)
+
+    # Calculate shape similarity using matchShapes
+    shape_similarity = cv.matchShapes(contour1, contour2, cv.CONTOURS_MATCH_I1, 0.0)
 
 
 def get_contour_points(con, frequency):
@@ -102,14 +166,18 @@ def get_contour_points(con, frequency):
 
     print(len(con), "len contours")
 
-    for i in range(len(con)):
+    for i in range(len(contours)):
         for j in range(len(con[i])):
             if count == frequency:
-                # print("(%d, %d)" % (contours[i][j][0][0], contours[i][j][0][1]))
+                print("(%d, %d)" % (contours[i][j][0][0], contours[i][j][0][1]))
                 coords.append([con[i][j][0][0], con[i][j][0][1]])
                 count = 0
             else:
                 count += 1
+        if frequency < len(con[i]):
+            coords.append([con[i][frequency][0][0], con[i][frequency][0][1]])
+            # print("(%d, %d)" % (contours[i][frequency][0][0], contours[i][frequency][0][1]))
+
         coords.append([None, None])
     print("len coords:", len(coords))
 
@@ -122,6 +190,7 @@ def get_contour_points(con, frequency):
             threes.append([coords[i], coords[i + 1], coords[i + 2]])
             i += 2
     print("len threes:", len(threes))
+    print(threes)
     return np.asarray(threes)
 
 
@@ -169,8 +238,32 @@ for p in points:
         else:
             circle = calculate_circle(p)
             if circle is not None:
-                print("(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f \\left\\{%0.2f < x < %0.2f\\right\\} \\left\\{%0.2f < y "
-                      "< %0.2f\\right\\}"
-                      % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
+                vertical_concavity = determine_concavity_vertical([x_bounds[2][0], x_bounds[2][1]], circle)
+                horizontal_concavity = determine_concavity_horizontal([y_bounds[2][0], y_bounds[2][1]], circle)
+                if vertical_concavity == 1:
+                    if horizontal_concavity == 1:
+                        print("(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f \\left\\{%0.2f - 0.7 < x < %0.2f\\right\\} \\left\\{%0.2f - 0.7 < y "
+                              "< %0.2f\\right\\}"
+                              % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
+                    else:
+                        print("(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f \\left\\{%0.2f < x < %0.2f + 0.7\\right\\} \\left\\{%0.2f - 0.7 < y "
+                              "< %0.2f\\right\\}"
+                              % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
+                elif vertical_concavity == -1:
+                    if horizontal_concavity == 1:
+                        print("(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f \\left\\{%0.2f - 0.7 < x < %0.2f\\right\\} \\left\\{%0.2f < y "
+                              "< %0.2f + 0.7\\right\\}"
+                              % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
+                    else:
+                        print(
+                            "(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f \\left\\{%0.2f < x < %0.2f + 0.7\\right\\} \\left\\{%0.2f < y "
+                            "< %0.2f + 0.7\\right\\}"
+                            % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
+                # else:
+                #     print(
+                #         "(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f \\left\\{%0.2f < x < %0.2f\\right\\} \\left\\{%0.2f < y "
+                #         "< %0.2f\\right\\}"
+                #         % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
 
 print("Number of equations:", num_equations)
+
