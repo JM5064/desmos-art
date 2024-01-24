@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <title>Desmos Art</title>
+
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="shortcut icon" href="#">
+
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+      
+      <link rel="stylesheet" href="static/style.css">
+      <!-- <script src="static/script.js"></script> -->
+    </head>
+
+    <body>
+
+      <h1>Insert an Image</h1>
+
+      <form action="/run_script" method="post" enctype="multipart/form-data">
+        <input type="file" id="image" name="image" accept="image/*">
+        <input type="submit" value="Submit">
+      </form>
+       
+      <script type="application/javascript" src="static/script.js"></script>
+
+    </body>
+</html>
