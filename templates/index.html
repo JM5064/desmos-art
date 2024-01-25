@@ -1,33 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-      <title>Desmos Art</title>
+{% extends "layout.html" %}
 
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link rel="shortcut icon" href="#">
+{% block content %}
+  <h1>Insert an Image</h1>
 
-      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-      
-      <link rel="stylesheet" href="static/style.css">
-    </head>
-
-    <body>
-
-      <h1 class>Insert an Image</h1>
-
-      <form action="/" method="post" enctype="multipart/form-data">
-        <input type="file" id="image" name="image" accept="image/*">
-        <input type="submit" value="Submit">
-      </form>
-       
-      {% if equations %}
-        <textarea id="equations" class="equations">{{ equations | safe }}</textarea>
-        <button onclick="copyToClipboard()" id="copy">Copy to Clipboard</button>
-      {% endif %}
+  <form action="/" method="post" enctype="multipart/form-data">
+    <input type="file" id="image" name="image" accept="image/*">
+    <input type="submit" value="Submit">
+  </form>
+    
+  {% if equations %}
+    <textarea id="equations" class="equations">{{ equations | safe }}</textarea>
+    <button onclick="copyToClipboard()" id="copy">Copy to Clipboard</button>
+    <form action="/desmos" method="get">
+      <button>View on Desmos</button>
+    </form>
+  {% endif %}
 
 
-      <script type="application/javascript" src="static/script.js"></script>
+  <script type="application/javascript" src="static/script.js"></script>
 
-    </body>
-</html>
+{% endblock content %}

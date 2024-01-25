@@ -16,6 +16,11 @@ def secret():
     return ":eyes:"
 
 
+@app.route('/desmos')
+def desmos():
+    return render_template('desmos.html')
+
+
 @app.route('/', methods=['POST'])
 def run_script():
     try:
@@ -25,6 +30,10 @@ def run_script():
         image_file.save(path)
 
         image = main.get_image(path)
+
+        if image is None:
+            return render_template('index.html')
+
         equation_image = main.EquationImage(image)
 
         # main.display_image(image)

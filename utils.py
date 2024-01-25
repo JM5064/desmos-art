@@ -140,7 +140,7 @@ def get_contour_points(con, frequency):
     count = 0
     coords = []
 
-    print(len(con), "len contours")
+    # print(len(con), "len contours")
 
     for i in range(len(con)):
         for j in range(len(con[i])):
@@ -155,7 +155,7 @@ def get_contour_points(con, frequency):
             # print("(%d, %d)" % (contours[i][frequency][0][0], contours[i][frequency][0][1]))
 
         coords.append([None, None])
-    print("len coords:", len(coords))
+    # print("len coords:", len(coords))
 
     threes = []
     i = 0
@@ -165,7 +165,7 @@ def get_contour_points(con, frequency):
         else:
             threes.append([coords[i], coords[i + 1], coords[i + 2]])
             i += 2
-    print("len threes:", len(threes))
+    # print("len threes:", len(threes))
     # print(threes)
     return np.asarray(threes)
 

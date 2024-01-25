@@ -1,6 +1,5 @@
 import cv2 as cv
 import utils
-import app
 import sys
 import io
 
@@ -10,7 +9,7 @@ def get_image(path):
 
         if img is None:
             print("Image not found")
-            exit()
+            return None
 
         img = cv.rotate(img, cv.ROTATE_180)
         img = cv.flip(img, 1)
