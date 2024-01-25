@@ -1,6 +1,7 @@
  .equations {
-    width: 300px;
+    width: 400px;
     height: 500px;
     color: blue;
     overflow-x: scroll;
+    
  }

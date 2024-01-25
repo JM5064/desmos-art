@@ -25,9 +25,11 @@ def run_script():
         image_file.save(path)
 
         image = main.get_image(path)
+        equation_image = main.EquationImage(image)
+
         # main.display_image(image)
-        points = main.calculate_points(image)
-        result = main.get_equations(points, image)
+
+        result = equation_image.get_equations(image)
         # return result
         return render_template('index.html', equations=result)
 

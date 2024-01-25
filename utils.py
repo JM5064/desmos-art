@@ -191,8 +191,3 @@ def shift_points(coord_set, shift_x, shift_y):
 def bgr_to_hex(b, g, r):
     return '#{:02x}{:02x}{:02x}'.format(r, g, b)
 
-
-def get_color(coord_set, image):
-    color = image[coord_set[1][1], coord_set[1][0]]
-
-    return bgr_to_hex(color[0], color[1], color[2])
