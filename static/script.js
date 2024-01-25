@@ -4,4 +4,7 @@ document.getElementById('image').addEventListener('change', function (e){
 })
 
 
-document.getElementById('copy')
+async function copyToClipboard() {
+    var copyText = document.querySelector("#equations");
+    await navigator.clipboard.writeText(copyText.textContent);
+}

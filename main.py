@@ -71,16 +71,16 @@ def get_equations(points, img):
         y_bounds = utils.calculate_y_bounds(p)
         clr = utils.get_color(p, img)
         print(clr)
-        print("<br>")
+        # print("<br>")
         if not utils.contains_duplicate(p):
             num_equations += 1
             if utils.is_collinear(p):
                 if utils.is_vertical(p):
-                    print("x = %0.2f \\left\\{%0.2f < y < %0.2f\\right\\}<br>"
+                    print("x = %0.2f \\left\\{%0.2f < y < %0.2f\\right\\}"
                         % (p[0][0], y_bounds[0], y_bounds[1]))
                 else:
                     slope = utils.calculate_slope(p)
-                    print("y - %0.2f = %0.2f(x - %0.2f) \\left\\{%0.2f < x < %0.2f\\right\\}<br>"
+                    print("y - %0.2f = %0.2f(x - %0.2f) \\left\\{%0.2f < x < %0.2f\\right\\}"
                         % (p[0][1], slope, p[0][0], x_bounds[0], x_bounds[1]))
             else:
                 circle = utils.calculate_circle(p)
@@ -91,20 +91,20 @@ def get_equations(points, img):
                         if horizontal_concavity == 1:
                             print("(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f "
                                 "\\left\\{%0.2f - 0.7 < x < %0.2f\\right\\} \\left\\{%0.2f - 0.7 < y "
-                                "< %0.2f\\right\\}<br>"
+                                "< %0.2f\\right\\}"
                                 % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
                         else:
                             print("(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f "
-                                "\\left\\{%0.2f < x < %0.2f + 0.7\\right\\} \\left\\{%0.2f - 0.7 < y < %0.2f\\right\\}<br>"
+                                "\\left\\{%0.2f < x < %0.2f + 0.7\\right\\} \\left\\{%0.2f - 0.7 < y < %0.2f\\right\\}"
                                 % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
                     elif vertical_concavity == -1:
                         if horizontal_concavity == 1:
                             print("(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f "
-                                "\\left\\{%0.2f - 0.7 < x < %0.2f\\right\\} \\left\\{%0.2f < y < %0.2f + 0.7\\right\\}<br>"
+                                "\\left\\{%0.2f - 0.7 < x < %0.2f\\right\\} \\left\\{%0.2f < y < %0.2f + 0.7\\right\\}"
                                 % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
                         else:
                             print("(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f "
-                                "\\left\\{%0.2f < x < %0.2f + 0.7\\right\\} \\left\\{%0.2f < y < %0.2f + 0.7\\right\\}<br>"
+                                "\\left\\{%0.2f < x < %0.2f + 0.7\\right\\} \\left\\{%0.2f < y < %0.2f + 0.7\\right\\}"
                                 % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
                             
     print("Number of equations:", num_equations)

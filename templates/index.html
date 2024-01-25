@@ -22,8 +22,8 @@
       </form>
        
       {% if equations %}
-        <div class="equations">{{ equations | safe }}</div>
-        <button id="copy">Copy to Clipboard</button>
+        <textarea id="equations" class="equations">{{ equations | safe }}</textarea>
+        <button onclick="copyToClipboard()" id="copy">Copy to Clipboard</button>
       {% endif %}
 
 
