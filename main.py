@@ -26,7 +26,7 @@ def get_image(path):
 
     
     return img
- 
+
 
 def process_image(image):
     image = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
