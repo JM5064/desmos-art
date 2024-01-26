@@ -5,6 +5,8 @@ from io import BytesIO
 import main
 
 app = Flask(__name__, static_url_path='/static')
+result = ""
+
 
 @app.route('/')
 def index():
@@ -18,12 +20,18 @@ def secret():
 
 @app.route('/desmos')
 def desmos():
-    return render_template('desmos.html')
+    try:
+        global result
+        return render_template('desmos.html', equations=result)
+    except Exception as e:
+        return str(e)
 
 
 @app.route('/', methods=['POST'])
 def run_script():
     try:
+        global result
+
         image_file = request.files['image']
 
         path = 'temp_path'
@@ -36,14 +44,14 @@ def run_script():
 
         equation_image = main.EquationImage(image)
 
-        # main.display_image(image)
+        # equation_image.display_image()
 
         result = equation_image.get_equations(image)
-        # return result
-        return render_template('index.html', equations=result)
 
+        return render_template('index.html', equations=result)
     except Exception as e:
         return str(e)
+    
 
 
 if __name__ == '__main__':

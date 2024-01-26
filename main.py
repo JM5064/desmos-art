@@ -47,8 +47,8 @@ class EquationImage:
 
         points = utils.get_contour_points(contours, 6)
 
-        # points = shift_points(points, 1.9, 4)
-        # points = scale_points(points, 1)
+        points = utils.shift_points(points, self.shift_x, self.shift_y)
+        points = utils.scale_points(points, self.scale_factor)
 
         return points
     

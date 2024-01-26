@@ -4,7 +4,14 @@
   <script src="https://www.desmos.com/api/v1.8/calculator.js?apiKey="></script>
 
   <div id="calculator" style="width: 99vw; height: 98vh;"></div>
-
+  <script>
+    var equations = `{{ equations | safe }}`
+    equations = equations.replace(/left/g, '\\left\\');
+    equations = equations.replace(/ight/g, '\\right\\');
+    console.log(equations);
+  </script>
+  
   <script type="application/javascript" src="static/desmos.js"></script>
+  
   
 {% endblock content %}
