@@ -28,7 +28,7 @@ def desmos():
         return str(e)
 
 
-@app.route('/', methods=['POST'])
+# @app.route('/', methods=['POST'])
 # def run_script():
 #     try:
 #         global result
@@ -72,12 +72,14 @@ def run_script():
                 return render_template('index.html')
 
             equation_image = main.EquationImage(image)
+            printed_equation_image = main.EquationImage(image)
 
             # equation_image.display_image()
 
             result.append(equation_image.get_equations(image))
+            printed_result = printed_equation_image.get_printed_equations(image)
 
-        return render_template('index.html', equations=result)
+        return render_template('index.html', equations=printed_result)
     except Exception as e:
         return str(e)
     

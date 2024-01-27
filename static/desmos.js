@@ -2,6 +2,7 @@ var elt = document.getElementById('calculator');
 var calculator = Desmos.GraphingCalculator(elt);
 
 
+
 function setBounds() {
     calculator.setMathBounds({
         left: -75.065,
@@ -12,21 +13,18 @@ function setBounds() {
 }
 
 setBounds();
+var defaultState = calculator.getState();
 
 
 async function drawLines(lines) {
-    return new Promise(async resolve => {
-        console.log("hello");
-
-        // lines = equations[img];
-    
+    return new Promise(async resolve => {    
         var color = '#000000';
     
         for (var i = 0; i < lines.length; i++) {
             if (lines[i].startsWith('#')) {
                 color = lines[i];
             } else {
-                calculator.setExpression({ id: i, color: color, latex: lines[i] });
+                calculator.setExpression({ color: color, latex: lines[i] });
             }
         }
     
@@ -47,59 +45,62 @@ async function takeScreenshot() {
             "preserveAxisNumers": false
         };
     
-        var data = await calculator.asyncScreenshot(opts, downloadImage);
+        calculator.asyncScreenshot(opts, downloadImage);
         await removeLines();
         resolve();
     })
-
-    
 }
 
 
 async function downloadImage(imageData) {
-    return new Promise(async resolve => {
-        var img = document.createElement('a');
-        img.style.display = 'none';
-        
-        img.href = imageData;
+    var img = document.createElement('a');
+    img.style.display = 'none';
     
-        img.download = 'image.jpg';
-    
-        document.body.appendChild(img);
-    
-        img.click();
-    
-        document.body.removeChild(img);
-    
-        // await removeLines();
-        resolve();
-    })
-    
+    img.href = imageData;
+
+    img.download = 'image5.jpg';
+
+    document.body.appendChild(img);
+
+    img.click();
+
+    document.body.removeChild(img);    
 }
 
 async function removeLines() {
-    return new Promise(async resolve => {
-        var expressions = calculator.getExpressions();
-        for (var i = 0; i < expressions.length; i++) {
-            calculator.removeExpression({ id: expressions[i].id})
-        }
-        resolve();
-    })
+    calculator.setState(defaultState);
 }
 
 
+// async function processEquations() {
+//     for (var img = 0; img < equations.length; img++) {
+//         await drawLines(equations[img]);
+//     }
+// }
 async function processEquations() {
-    for (var img = 0; img < equations.length; img++) {
-        await drawLines(equations[img]);
+    const chunkSize = 10;
+    const totalChunks = Math.ceil(equations.length / chunkSize);
+
+    for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+        const start = chunkIndex * chunkSize;
+        const end = Math.min(start + chunkSize, equations.length);
+        const chunk = equations.slice(start, end);
+
+        await processChunk(chunk);
     }
-    
-    // for await (lines of equations) {
-    //     await drawLines(lines);
-    // }
-    console.log("are you waiting?")
 }
+
+async function processChunk(chunk) {
+    for (const equation of chunk) {
+        await drawLines(equation);
+    }
+}
+
+
 
 processEquations();
+
+console.log("done");
 
 
 
