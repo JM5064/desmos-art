@@ -32,6 +32,7 @@ def desmos():
 def run_script():
     try:
         global result
+        result.clear()
 
         image_file = request.files.getlist('image')
         print(len(image_file))

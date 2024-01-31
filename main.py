@@ -70,7 +70,6 @@ class EquationImage:
             clr = self.get_color(p, image)
             equations.append(clr)
             if not utils.contains_duplicate(p):
-                num_equations += 1
                 if utils.is_collinear(p):
                     if utils.is_vertical(p):
                         equations.append("x = %0.2f \\left\\{%0.2f < y < %0.2f\\right\\}"
