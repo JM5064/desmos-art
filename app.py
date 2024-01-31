@@ -26,32 +26,6 @@ def desmos():
         return render_template('desmos.html', equations=json.dumps(result))
     except Exception as e:
         return str(e)
-
-
-# @app.route('/', methods=['POST'])
-# def run_script():
-#     try:
-#         global result
-
-#         image_file = request.files['image']
-
-#         path = 'temp_path'
-#         image_file.save(path)
-
-#         image = main.get_image(path)
-
-#         if image is None:
-#             return render_template('index.html')
-
-#         equation_image = main.EquationImage(image)
-
-#         # equation_image.display_image()
-
-#         result = equation_image.get_equations(image)
-
-#         return render_template('index.html', equations=result)
-#     except Exception as e:
-#         return str(e)
     
 
 @app.route('/', methods=['POST'])
@@ -72,12 +46,13 @@ def run_script():
                 return render_template('index.html')
 
             equation_image = main.EquationImage(image)
-            printed_equation_image = main.EquationImage(image)
 
             # equation_image.display_image()
 
-            result.append(equation_image.get_equations(image))
-            printed_result = printed_equation_image.get_printed_equations(image)
+            equations = equation_image.get_equations(image)
+
+            result.append(equations)
+            printed_result = equation_image.get_printed_equations(equations)
 
         return render_template('index.html', equations=printed_result)
     except Exception as e:

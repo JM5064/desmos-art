@@ -58,7 +58,7 @@ async function downloadImage(imageData) {
     
     img.href = imageData;
 
-    img.download = 'image5.jpg';
+    img.download = 'image.jpg';
 
     document.body.appendChild(img);
 
