@@ -22,7 +22,6 @@ def secret():
 @app.route('/desmos')
 def desmos():
     try:
-        global result
         return render_template('desmos.html', equations=json.dumps(result))
     except Exception as e:
         return str(e)
@@ -31,7 +30,6 @@ def desmos():
 @app.route('/', methods=['POST'])
 def run_script():
     try:
-        global result
         result.clear()
 
         image_file = request.files.getlist('image')
