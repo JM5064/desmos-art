@@ -1,26 +1,34 @@
 var elt = document.getElementById('calculator');
 var calculator = Desmos.GraphingCalculator(elt);
-
+var count = 160;
 
 
 function setBounds() {
-    calculator.setMathBounds({
-        left: -75.065,
-        right: 1405.354,
-        bottom: -161.045,
-        top: 934.883
+    calculator.setMathBounds({ 
+        left: -221.17,
+        right: 1450.084, 
+        bottom: -155.929, 
+        top: 1081.27
       });
 }
 
 setBounds();
 var defaultState = calculator.getState();
+var pass = 0;
+var imageChunks = 8;
+var totalTime = 0;
 
 
 async function drawLines(lines) {
-    return new Promise(async resolve => {    
+    return new Promise(async resolve => {
+        var startTime = performance.now()
+        console.time();
         var color = '#000000';
-    
-        for (var i = 0; i < lines.length; i++) {
+
+        var start = pass * Math.floor(lines.length / imageChunks);
+        var end = (pass + 1) * Math.floor(lines.length / imageChunks);
+
+        for (var i = start; i < end; i++) {
             if (lines[i].startsWith('#')) {
                 color = lines[i];
             } else {
@@ -28,6 +36,12 @@ async function drawLines(lines) {
             }
         }
     
+        pass++;
+
+        console.timeEnd();
+        const elapsedTime = performance.now() - startTime;
+        totalTime += elapsedTime;
+
         await takeScreenshot();
         resolve();
     });
@@ -58,7 +72,8 @@ async function downloadImage(imageData) {
     
     img.href = imageData;
 
-    img.download = 'image.jpg';
+    img.download = "rick_" + count + '.png';
+    count++;
 
     document.body.appendChild(img);
 
@@ -72,11 +87,6 @@ async function removeLines() {
 }
 
 
-// async function processEquations() {
-//     for (var img = 0; img < equations.length; img++) {
-//         await drawLines(equations[img]);
-//     }
-// }
 async function processEquations() {
     const chunkSize = 10;
     const totalChunks = Math.ceil(equations.length / chunkSize);
@@ -97,10 +107,11 @@ async function processChunk(chunk) {
 }
 
 
+for (var i = 0; i < imageChunks; i++) {
+    processEquations();
+}
 
-processEquations();
-
-console.log("done");
+console.log("Total Time " + totalTime);
 
 
 
