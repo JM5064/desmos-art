@@ -1,4 +1,5 @@
 import cv2 as cv
+import numpy as np
 import utils
 import sys
 import io
@@ -30,7 +31,7 @@ class EquationImage:
 
     def process_image(self):
         self.image = cv.cvtColor(self.image, cv.COLOR_RGB2GRAY)
-        self.image = cv.Canny(self.image, 50, 80)
+        self.image = cv.Canny(self.image, 20, 30)
 
 
     def display_image(self):
@@ -41,11 +42,11 @@ class EquationImage:
     def calculate_points(self):
         self.process_image()
         contours, hierarchy = cv.findContours(self.image, cv.RETR_TREE, cv.CHAIN_APPROX_NONE)
-        # contours = remove_similar_contours(contours)
+        # contours = utils.remove_similar_contours(contours)
 
-        # display_image(processed_img)
+        # self.display_image()
 
-        points = utils.get_contour_points(contours, 6)
+        points = utils.get_contour_points(contours, 10)
 
         points = utils.shift_points(points, self.shift_x, self.shift_y)
         points = utils.scale_points(points, self.scale_factor)
@@ -54,7 +55,18 @@ class EquationImage:
     
 
     def get_color(self, coord_set, image):
-        color = image[coord_set[1][1], coord_set[1][0]]
+        color = np.array(image[coord_set[1][1], coord_set[1][0]], np.int16)
+
+        # if abs(color[0] - color[1]) < 30 and abs(color[0] - color[2]) < 30:
+        #     color[0] += 40
+        #     if color[0] > 255:
+        #         color[0] = 255
+        #     color[1] += 40
+        #     if color[1] > 255:
+        #         color[1] = 255
+        #     color[2] += 40
+        #     if color[2] > 255:
+        #         color[2] = 255
 
         return utils.bgr_to_hex(color[0], color[1], color[2])
 
