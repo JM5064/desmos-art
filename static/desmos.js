@@ -1,28 +1,33 @@
 var elt = document.getElementById('calculator');
 var calculator = Desmos.GraphingCalculator(elt);
-var count = 160;
+var imageCount = 4;
 
 
 function setBounds() {
-    calculator.setMathBounds({ 
-        left: -221.17,
-        right: 1450.084, 
-        bottom: -155.929, 
-        top: 1081.27
+    // calculator.setMathBounds({ 
+    //     left: -221.17,
+    //     right: 1450.084, 
+    //     bottom: -155.929, 
+    //     top: 1081.27
+    //   });
+    calculator.setMathBounds({  // -188.253, 780.208, -45.518, 671.416
+        left: -188.253,
+        right: 780.208,
+        bottom: -45.518,
+        top: 671.416
       });
 }
 
 setBounds();
 var defaultState = calculator.getState();
 var pass = 0;
-var imageChunks = 8;
+var imageChunks = 4;
 var totalTime = 0;
 
 
 async function drawLines(lines) {
     return new Promise(async resolve => {
         var startTime = performance.now()
-        console.time();
         var color = '#000000';
 
         var start = pass * Math.floor(lines.length / imageChunks);
@@ -38,8 +43,8 @@ async function drawLines(lines) {
     
         pass++;
 
-        console.timeEnd();
         const elapsedTime = performance.now() - startTime;
+        // console.log("Time: " + elapsedTime);
         totalTime += elapsedTime;
 
         await takeScreenshot();
@@ -72,8 +77,8 @@ async function downloadImage(imageData) {
     
     img.href = imageData;
 
-    img.download = "rick_" + count + '.png';
-    count++;
+    img.download = "rick_" + imageCount + '.png';
+    imageCount++;
 
     document.body.appendChild(img);
 
@@ -91,8 +96,8 @@ async function processEquations() {
     const chunkSize = 10;
     const totalChunks = Math.ceil(equations.length / chunkSize);
 
-    for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
-        const start = chunkIndex * chunkSize;
+    for (var i = 0; i < totalChunks; i++) {
+        const start = chunkSize * i;
         const end = Math.min(start + chunkSize, equations.length);
         const chunk = equations.slice(start, end);
 
@@ -101,8 +106,12 @@ async function processEquations() {
 }
 
 async function processChunk(chunk) {
-    for (const equation of chunk) {
-        await drawLines(equation);
+    for (const equations of chunk) {
+        await drawLines(equations);
+        if (pass > imageChunks - 1) {
+            pass = 0;
+            console.log("Total Time: " + totalTime);
+        }
     }
 }
 
@@ -110,10 +119,6 @@ async function processChunk(chunk) {
 for (var i = 0; i < imageChunks; i++) {
     processEquations();
 }
-
-console.log("Total Time " + totalTime);
-
-
 
 
 

@@ -114,7 +114,7 @@ class EquationImage:
                                 equations.append("(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f "
                                     "\\left\\{%0.2f < x < %0.2f + 0.7\\right\\} \\left\\{%0.2f < y < %0.2f + 0.7\\right\\}"
                                     % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
-                                
+                                                                
         return equations
     
 
