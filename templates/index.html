@@ -11,6 +11,7 @@
   {% if equations %}
     <textarea id="equations" class="equations">{{ equations | safe }}</textarea>
     <button onclick="copyToClipboard()" id="copy">Copy to Clipboard</button>
+    <div>Number of Equations: {{ equation_count }}</div>
     <form action="/desmos" method="get">
       <button>View on Desmos</button>
     </form>

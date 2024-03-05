@@ -52,8 +52,9 @@ def run_script():
 
             result.append(equations)
             printed_result = equation_image.get_printed_equations(equations)
+            number_of_equations = equation_image.get_num_equations(equations)
 
-        return render_template('index.html', equations=printed_result)
+        return render_template('index.html', equations=printed_result, equation_count=number_of_equations)
     except Exception as e:
         return str(e)
     

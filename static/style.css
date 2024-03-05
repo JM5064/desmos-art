@@ -1,7 +1,11 @@
- .equations {
+body {
+   font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.equations {
     width: 400px;
     height: 500px;
     color: blue;
     overflow-x: scroll;
-    
+    display: block;
  }
