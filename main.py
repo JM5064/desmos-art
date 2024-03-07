@@ -30,6 +30,7 @@ class EquationImage:
 
 
     def process_image(self):
+        self.image = cv.blur(self.image, (3,3))
         self.image = cv.cvtColor(self.image, cv.COLOR_RGB2GRAY)
         self.image = cv.Canny(self.image, 20, 30)
 
@@ -46,7 +47,7 @@ class EquationImage:
 
         # self.display_image()
 
-        points = utils.get_contour_points(contours, 10)
+        points = utils.get_threes(contours, 10)
 
         points = utils.shift_points(points, self.shift_x, self.shift_y)
         points = utils.scale_points(points, self.scale_factor)
@@ -71,27 +72,27 @@ class EquationImage:
         return utils.bgr_to_hex(color[0], color[1], color[2])
 
 
-    def get_equations(self, image):
+    def get_circle_equations(self, image):
         equations = []
 
-        points = self.calculate_points()
+        threes = self.calculate_points()
 
-        for p in points:
-            x_bounds = utils.calculate_x_bounds(p)
-            y_bounds = utils.calculate_y_bounds(p)
-            clr = self.get_color(p, image)
+        for points in threes:
+            x_bounds = utils.calculate_x_bounds(points)
+            y_bounds = utils.calculate_y_bounds(points)
+            clr = self.get_color(points, image)
             equations.append(clr)
-            if not utils.contains_duplicate(p):
-                if utils.is_collinear(p):
-                    if utils.is_vertical(p):
+            if not utils.contains_duplicate(points):
+                if utils.is_collinear(points):
+                    if utils.is_vertical(points):
                         equations.append("x = %0.2f \\left\\{%0.2f < y < %0.2f\\right\\}"
-                            % (p[0][0], y_bounds[0], y_bounds[1]))
+                            % (points[0][0], y_bounds[0], y_bounds[1]))
                     else:
-                        slope = utils.calculate_slope(p)
+                        slope = utils.calculate_slope(points)
                         equations.append("y - %0.2f = %0.2f(x - %0.2f) \\left\\{%0.2f < x < %0.2f\\right\\}"
-                            % (p[0][1], slope, p[0][0], x_bounds[0], x_bounds[1]))
+                            % (points[0][1], slope, points[0][0], x_bounds[0], x_bounds[1]))
                 else:
-                    circle = utils.calculate_circle(p)
+                    circle = utils.calculate_circle(points)
                     if circle is not None:
                         vertical_concavity = utils.determine_concavity_vertical([x_bounds[2][0], x_bounds[2][1]], circle)
                         horizontal_concavity = utils.determine_concavity_horizontal([y_bounds[2][0], y_bounds[2][1]], circle)

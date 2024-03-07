@@ -136,22 +136,24 @@ def remove_similar_contours(cons):
     return unique_contours
 
 
-def get_contour_points(con, frequency):
+# pass in the contours, combine the contours by flattening into a reduced list of points (based on frequency)
+# split every three points in the new the list of points
+def get_threes(contours, frequency):
     count = 0
     coords = []
 
     # print(len(con), "len contours")
 
-    for i in range(len(con)):
-        for j in range(len(con[i])):
+    for i in range(len(contours)):
+        for j in range(len(contours[i])):
             if count == frequency:
                 # print("(%d, %d)" % (contours[i][j][0][0], contours[i][j][0][1]))
-                coords.append([con[i][j][0][0], con[i][j][0][1]])
+                coords.append([contours[i][j][0][0], contours[i][j][0][1]])
                 count = 0
             else:
                 count += 1
-        if frequency < len(con[i]):
-            coords.append([con[i][frequency][0][0], con[i][frequency][0][1]])
+        if frequency < len(contours[i]):
+            coords.append([contours[i][frequency][0][0], contours[i][frequency][0][1]])
             # print("(%d, %d)" % (contours[i][frequency][0][0], contours[i][frequency][0][1]))
 
         coords.append([None, None])
@@ -169,6 +171,24 @@ def get_contour_points(con, frequency):
     # print(threes)
     return np.asarray(threes)
 
+
+def reduce_bezier_contour_points(contours, frequency):
+    reduced_contours = []
+
+    for contour in contours:
+        count = 0
+        reduced_contour = []
+
+        # make sure there are at least 3 points to calculate bezier curve
+        if len(contours) - len(contours) / frequency >= 3:
+            for point in contour:
+                if count != frequency:
+                    reduced_contour.append(point)
+        
+        reduced_contours.append(reduced_contour)
+
+    return reduced_contours
+    
 
 def scale_points(coord_set, scale_factor):
     scaled_points = []
