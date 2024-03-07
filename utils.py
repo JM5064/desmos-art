@@ -180,12 +180,15 @@ def reduce_bezier_contour_points(contours, frequency):
         reduced_contour = []
 
         # make sure there are at least 3 points to calculate bezier curve
-        if len(contours) - len(contours) / frequency >= 3:
+        if len(contour) - len(contour) // frequency >= 3:
             for point in contour:
+                # remove every frequency'th point
                 if count != frequency:
                     reduced_contour.append(point)
+                else:
+                    count = 0
         
-        reduced_contours.append(reduced_contour)
+            reduced_contours.append(reduced_contour)
 
     return reduced_contours
     
