@@ -184,7 +184,7 @@ def reduce_bezier_contour_points(contours, frequency):
             for point in contour:
                 # remove every frequency'th point
                 if count != frequency:
-                    reduced_contour.append(point)
+                    reduced_contour.append(point[0])
                 else:
                     count = 0
         
