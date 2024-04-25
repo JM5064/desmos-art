@@ -93,16 +93,15 @@ def determine_concavity_vertical(left, circ):
     x, y = left[0], left[1]
     h, k = circ[0], circ[1]
 
-    if y == k:
+    a = x - h
+    b = y - k
+
+    if b == 0:
         return 0
-    if -1 / (y - k) + ((x - h) ** 2) / ((y - k) ** 3) > 0:
+    if (-a ** 2 - b ** 2) / b ** 3 > 0:
         return 1
-    elif -1 / (y - k) + ((x - h) ** 2) / ((y - k) ** 3) < 0:
+    elif (-a ** 2 - b ** 2) / b ** 3 < 0:
         return -1
-    # if (-((x - h) ** 2) - ((y - k) ** 2)) / (y - k) ** 3 > 0:
-    #     return 1
-    # elif (-((x - h) ** 2) - ((y - k) ** 2)) / (y - k) ** 3 < 0:
-    #     return -1
     else:
         print("huh?", left, circ)
 
@@ -111,11 +110,18 @@ def determine_concavity_horizontal(upper, circ):
     x, y = upper[0], upper[1]
     h, k = circ[0], circ[1]
 
-    if x == h:
+    a = x - h
+    b = y - k
+
+    if a == 0:
         return 0
-    if -1 / (x - h) - ((y - k) ** 2) / ((x - h) ** 3) > 0:
+    # if -1 / (x - h) - ((y - k) ** 2) / ((x - h) ** 3) > 0:
+    #     return 1
+    # elif -1 / (x - h) - ((y - k) ** 2) / ((x - h) ** 3) < 0:
+    #     return -1
+    if (-a ** 2 - b ** 2) / a ** 3 > 0:
         return 1
-    elif -1 / (x - h) - ((y - k) ** 2) / ((x - h) ** 3) < 0:
+    elif (-a ** 2 - b ** 2) / a ** 3 < 0:
         return -1
     else:
         print("huh??", upper, circ)
