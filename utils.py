@@ -99,6 +99,10 @@ def determine_concavity_vertical(left, circ):
         return 1
     elif -1 / (y - k) + ((x - h) ** 2) / ((y - k) ** 3) < 0:
         return -1
+    # if (-((x - h) ** 2) - ((y - k) ** 2)) / (y - k) ** 3 > 0:
+    #     return 1
+    # elif (-((x - h) ** 2) - ((y - k) ** 2)) / (y - k) ** 3 < 0:
+    #     return -1
     else:
         print("huh?", left, circ)
 

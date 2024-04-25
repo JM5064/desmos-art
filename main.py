@@ -79,7 +79,7 @@ class EquationImage:
 
     def print_bezier_equations(self):
         contours = self.get_contours
-        
+
         reduced_contours = self.calculate_bezier_points(contours)
 
         for contour in reduced_contours:
