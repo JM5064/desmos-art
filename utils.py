@@ -115,10 +115,6 @@ def determine_concavity_horizontal(upper, circ):
 
     if a == 0:
         return 0
-    # if -1 / (x - h) - ((y - k) ** 2) / ((x - h) ** 3) > 0:
-    #     return 1
-    # elif -1 / (x - h) - ((y - k) ** 2) / ((x - h) ** 3) < 0:
-    #     return -1
     if (-a ** 2 - b ** 2) / a ** 3 > 0:
         return 1
     elif (-a ** 2 - b ** 2) / a ** 3 < 0:

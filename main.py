@@ -36,7 +36,7 @@ class EquationImage:
         # self.image = cv.blur(self.image, (5,5))
         # self.image = cv.blur(self.image, (6,6))
         self.image = cv.cvtColor(self.image, cv.COLOR_RGB2GRAY)
-        self.image = cv.Canny(self.image, 30, 100)
+        self.image = cv.Canny(self.image, 30, 50)
 
 
     def display_image(self):
@@ -91,8 +91,7 @@ class EquationImage:
             # break
 
 
-    def get_circle_equations(self, image):
-        # self.print_bezier_equations()
+    def get_circle_line_equations(self, image):
         equations = []
 
         contours = self.get_contours()
@@ -101,43 +100,58 @@ class EquationImage:
         for points in threes:
             x_bounds = utils.calculate_x_bounds(points)
             y_bounds = utils.calculate_y_bounds(points)
+
             clr = self.get_color(points, image)
             equations.append(clr)
-            if not utils.contains_duplicate(points):
-                if utils.is_collinear(points):
-                    if utils.is_vertical(points):
-                        equations.append("x = %0.2f \\left\\{%0.2f < y < %0.2f\\right\\}"
-                            % (points[0][0], y_bounds[0], y_bounds[1]))
-                    else:
-                        slope = utils.calculate_slope(points)
-                        equations.append("y - %0.2f = %0.2f(x - %0.2f) \\left\\{%0.2f < x < %0.2f\\right\\}"
-                            % (points[0][1], slope, points[0][0], x_bounds[0], x_bounds[1]))
-                else:
-                    circle = utils.calculate_circle(points)
-                    if circle is not None:
-                        vertical_concavity = utils.determine_concavity_vertical([x_bounds[2][0], x_bounds[2][1]], circle)
-                        horizontal_concavity = utils.determine_concavity_horizontal([y_bounds[2][0], y_bounds[2][1]], circle)
-                        if vertical_concavity == 1:
-                            if horizontal_concavity == 1:
-                                equations.append("(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f "
-                                    "\\left\\{%0.2f - 0.7 < x < %0.2f\\right\\} \\left\\{%0.2f - 0.7 < y "
-                                    "< %0.2f\\right\\}"
-                                    % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
-                            else:
-                                equations.append("(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f "
-                                    "\\left\\{%0.2f < x < %0.2f + 0.7\\right\\} \\left\\{%0.2f - 0.7 < y < %0.2f\\right\\}"
-                                    % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
-                        elif vertical_concavity == -1:
-                            if horizontal_concavity == 1:
-                                equations.append("(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f "
-                                    "\\left\\{%0.2f - 0.7 < x < %0.2f\\right\\} \\left\\{%0.2f < y < %0.2f + 0.7\\right\\}"
-                                    % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
-                            else:
-                                equations.append("(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f "
-                                    "\\left\\{%0.2f < x < %0.2f + 0.7\\right\\} \\left\\{%0.2f < y < %0.2f + 0.7\\right\\}"
-                                    % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1]))
+
+            if utils.is_collinear(points):
+                # get line if collinear
+                line_equation = self.get_line_equation(points, x_bounds, y_bounds)
+
+                if line_equation is not None:
+                    equations.append(self.get_line_equation(points, x_bounds, y_bounds))
+            else:
+                # get circle if not collinear
+                circle_equation = self.get_circle_equation(points, x_bounds, y_bounds)
+                
+                if circle_equation is not None:
+                    equations.append(circle_equation)
                                                                 
         return equations
+    
+
+    def get_line_equation(self, points, x_bounds, y_bounds):
+        if not utils.contains_duplicate(points):
+            if utils.is_vertical(points):
+                return "x = %0.2f \\left\\{%0.2f < y < %0.2f\\right\\}" % (points[0][0], y_bounds[0], y_bounds[1])
+            else:
+                slope = utils.calculate_slope(points)
+
+                return "y - %0.2f = %0.2f(x - %0.2f) \\left\\{%0.2f < x < %0.2f\\right\\}" % (points[0][1], slope, points[0][0], x_bounds[0], x_bounds[1])
+        
+
+    def get_circle_equation(self, points, x_bounds, y_bounds):
+        if utils.contains_duplicate(points):
+            return None
+
+        circle = utils.calculate_circle(points)
+
+        if circle is None:
+            return None
+        
+        vertical_concavity = utils.determine_concavity_vertical([x_bounds[2][0], x_bounds[2][1]], circle)
+        horizontal_concavity = utils.determine_concavity_horizontal([y_bounds[2][0], y_bounds[2][1]], circle)
+        
+        if vertical_concavity == 1:
+            if horizontal_concavity == 1:
+                return "(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f \\left\\{%0.2f - 0.7 < x < %0.2f\\right\\} \\left\\{%0.2f - 0.7 < y < %0.2f\\right\\}" % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1])
+            else:
+                return "(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f \\left\\{%0.2f < x < %0.2f + 0.7\\right\\} \\left\\{%0.2f - 0.7 < y < %0.2f\\right\\}" % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1])
+        elif vertical_concavity == -1:
+            if horizontal_concavity == 1:
+                return "(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f \\left\\{%0.2f - 0.7 < x < %0.2f\\right\\} \\left\\{%0.2f < y < %0.2f + 0.7\\right\\}" % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1])
+            else:
+                return "(x - %0.2f)^2 + (y - %0.2f)^2 = %0.2f \\left\\{%0.2f < x < %0.2f + 0.7\\right\\} \\left\\{%0.2f < y < %0.2f + 0.7\\right\\}" % (circle[0], circle[1], circle[2], x_bounds[0], x_bounds[1], y_bounds[0], y_bounds[1])
     
 
     def get_printed_equations(self, equations):
