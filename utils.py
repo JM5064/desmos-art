@@ -148,23 +148,22 @@ def get_threes(contours, frequency):
     count = 0
     coords = []
 
-    # print(len(con), "len contours")
-
+    # loop over all contours to purge coords
     for i in range(len(contours)):
+        # loop over each point in the contour and decide whether to include it or not
         for j in range(len(contours[i])):
-            if count == frequency:
-                # print("(%d, %d)" % (contours[i][j][0][0], contours[i][j][0][1]))
+            # append every frequency'th point
+            if count % frequency == 0:
                 coords.append([contours[i][j][0][0], contours[i][j][0][1]])
-                count = 0
-            else:
-                count += 1
+            count += 1
+        # append the last (frequency'th?) point of each contour for a complete curve ???? what does this do
         if frequency < len(contours[i]):
             coords.append([contours[i][frequency][0][0], contours[i][frequency][0][1]])
-            # print("(%d, %d)" % (contours[i][frequency][0][0], contours[i][frequency][0][1]))
 
+        # append None to indicate end of contour
         coords.append([None, None])
-    # print("len coords:", len(coords))
 
+    # group purged coords into groups of threes
     threes = []
     i = 0
     while i < len(coords) - 2:
@@ -173,30 +172,65 @@ def get_threes(contours, frequency):
         else:
             threes.append([coords[i], coords[i + 1], coords[i + 2]])
             i += 2
-    # print("len threes:", len(threes))
-    # print(threes)
+
     return np.asarray(threes)
 
 
 def reduce_bezier_contour_points(contours, frequency):
-    reduced_contours = []
+    count = 0
+    coords = []
 
-    for contour in contours:
-        count = 0
-        reduced_contour = []
+    # loop over all contours to purge coords
+    for i in range(len(contours)):
+        # loop over each point in the contour and decide whether to include it or not
+        for j in range(len(contours[i])):
+            # append every frequency'th point, only if 
+            if len(contours[i]) - len(contours[i]) // frequency >= 3:
+                if count % frequency == 0:
+                    coords.append([contours[i][j][0][0], contours[i][j][0][1]])
+                count += 1
+        # append the last (frequency'th?) point of each contour for a complete curve ???? what does this do
+        if frequency < len(contours[i]):
+            coords.append([contours[i][frequency][0][0], contours[i][frequency][0][1]])
 
-        # make sure there are at least 3 points to calculate bezier curve
-        if len(contour) - len(contour) // frequency >= 3:
-            for point in contour:
-                # remove every frequency'th point
-                if count != frequency:
-                    reduced_contour.append(point[0])
-                else:
-                    count = 0
+        # append None to indicate end of contour
+        coords.append([None, None])
+
+
+    # group each contour back together
+    curves = []
+    i = 0
+    while i < len(coords):
+        curve = []
+        while coords[i][0] is not None:
+            curve.append(coords[i])
+            i += 1
+        i += 1
         
-            reduced_contours.append(reduced_contour)
+        if len(curve) > 2:
+            curves.append(curve)
+    
+    return curves
 
-    return reduced_contours
+
+    # reduced_contours = []
+
+    # for contour in contours:
+    #     count = 0
+    #     reduced_contour = []
+
+    #     # make sure there are at least 3 points to calculate bezier curve
+    #     if len(contour) - len(contour) // frequency >= 3:
+    #         for point in contour:
+    #             # remove every frequency'th point
+    #             if count != frequency:
+    #                 reduced_contour.append(point[0])
+    #             else:
+    #                 count = 0
+        
+    #         reduced_contours.append(reduced_contour)
+
+    # return reduced_contours
     
 
 def scale_points(coord_set, scale_factor):

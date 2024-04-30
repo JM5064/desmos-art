@@ -1,6 +1,20 @@
 import numpy as np
-import sys
-import io
+
+def get_functions():
+        functions = ["p_{12}(t, p_a, p_b) = (1-t)p_a+tp_b", 
+                    "p_{23}(t, p_b, p_c) = (1-t)p_b+tp_c",
+                    "p_{34}(t, p_c, p_d) = (1-t)p_c+tp_d",
+                    "p_{123}(t, p_a, p_b, p_c) = (1-t)p_{12}(t, p_a, p_b) + tp_{23}(t, p_b, p_c)",
+                    "p_{234}(t, p_b, p_c, p_d) = (1-t)p_{23}(t, p_b, p_c) + tp_{34}(t, p_c, p_d)",
+                    "p_{1234}(t, p_a, p_b, p_c, p_d) = (1-t)p_{123}(t, p_a, p_b, p_c) + tp_{234}(t, p_b, p_c, p_d)"]
+
+        return functions
+
+
+def print_functions():
+    functions = get_functions()
+    for func in functions:
+            print(func)
 
 
 class bezier():
@@ -10,16 +24,7 @@ class bezier():
         self.smoothness = smoothness
         self.left_control_points = self.get_left_control_points()
         self.right_control_points = self.get_right_control_points()
-
     
-    def print_functions(self):
-        print("p_{12}(t, p_a, p_b) = (1-t)p_a+tp_b")
-        print("p_{23}(t, p_b, p_c) = (1-t)p_b+tp_c")
-        print("p_{34}(t, p_c, p_d) = (1-t)p_c+tp_d")
-        print("p_{123}(t, p_a, p_b, p_c) = (1-t)p_{12}(t, p_a, p_b) + tp_{23}(t, p_b, p_c)")
-        print("p_{234}(t, p_b, p_c, p_d) = (1-t)p_{23}(t, p_b, p_c) + tp_{34}(t, p_c, p_d)")
-        print("p_{1234}(t, p_a, p_b, p_c, p_d) = (1-t)p_{123}(t, p_a, p_b, p_c) + tp_{234}(t, p_b, p_c, p_d)")
-
 
     def calculate_left_control_point(self, p1, p2, p3):
         l13 = np.subtract(p3, p1)
@@ -73,7 +78,6 @@ class bezier():
     def get_curve_equations(self):
         equations = []
         num_points = len(self.points)
-        print(num_points)
 
         equ = "p_{1234}(t, (%f , %f), (%f , %f), (%f , %f), (%f , %f))"
 
@@ -93,27 +97,24 @@ class bezier():
                                 self.right_control_points[num_points-3][0], self.right_control_points[num_points-3][1],
                                 self.right_control_points[num_points-3][0], self.right_control_points[num_points-3][1],
                                 self.points[num_points-1][0], self.points[num_points-1][1]))
-        
-        for eq in equations:
-            print(eq)
-                
+                        
         return equations
 
 
 
-a1 = np.array([1,0.5])
-a2 = np.array([1.5,1.2])
-a3 = np.array([2,1.5])
-a4 = np.array([3,2])
-a5 = np.array([4,1.2])
-a6 = np.array([7,2])
-a7 = np.array([4,3])
-a8 = np.array([6,1])
-a9 = np.array([8,1])
+# a1 = np.array([1,0.5])
+# a2 = np.array([1.5,1.2])
+# a3 = np.array([2,1.5])
+# a4 = np.array([3,2])
+# a5 = np.array([4,1.2])
+# a6 = np.array([7,2])
+# a7 = np.array([4,3])
+# a8 = np.array([6,1])
+# a9 = np.array([8,1])
 
 
-bez = bezier([a1, a2, a3, a4, a5, a6, a7, a8, a9], 0.35)
-bez.print_functions()
-print(bez.left_control_points)
-print(bez.right_control_points)
-print(bez.get_curve_equations())
+# bez = bezier([a1, a2, a3, a4, a5, a6, a7, a8, a9], 0.35)
+# print_functions()
+# print(bez.left_control_points)
+# print(bez.right_control_points)
+# print(bez.get_curve_equations())

@@ -48,7 +48,8 @@ def run_script():
 
             # equation_image.display_image()
 
-            equations = equation_image.get_circle_line_equations(image)
+            # equations = equation_image.get_circle_line_equations(image)
+            equations = equation_image.get_bezier_equations(image)
 
             result.append(equations)
             printed_result = equation_image.get_printed_equations(equations)

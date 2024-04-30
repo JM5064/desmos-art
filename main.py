@@ -53,7 +53,7 @@ class EquationImage:
         return contours
 
 
-    def calculate_circle_points(self, contours):        
+    def calculate_circle_points(self, contours):
         points = utils.get_threes(contours, 10)
 
         points = utils.shift_points(points, self.shift_x, self.shift_y)
@@ -62,33 +62,45 @@ class EquationImage:
         return points
     
 
-    def get_color(self, coord_set, image):
-        color = np.array(image[coord_set[1][1], coord_set[1][0]], np.int16)
-
-        return utils.bgr_to_hex(color[0], color[1], color[2])
-    
-
     def calculate_bezier_points(self, contours):
-        points = utils.reduce_bezier_contour_points(contours, 2)
+        points = utils.reduce_bezier_contour_points(contours, 10)
 
         # points = utils.shift_points(points, self.shift_x, self.shift_y)
         # points = utils.scale_points(points, self.scale_factor)
 
         return points
     
+    
+    def get_color(self, coord, image):
+        color = np.array(image[coord[1], coord[0]], np.int16)
 
-    def print_bezier_equations(self):
-        contours = self.get_contours
+        return utils.bgr_to_hex(color[0], color[1], color[2])
+    
 
+    def get_bezier_equations(self, image):
+        equations = []
+        contours = self.get_contours()
         reduced_contours = self.calculate_bezier_points(contours)
 
+        functions = bezier.get_functions()
+
+        for func in functions:
+            equations.append(func)
+
         for contour in reduced_contours:
-            # print("contour test: ", contour)
-            # print("first point:", contour[0][0])
+            # print(contour[0])
+            if self.color:
+                clr = self.get_color(contour[2], image)
+                equations.append(clr)
+
             curve = bezier.bezier(contour)
 
-            curve.get_curve_equations()
-            # break
+            curve_equations = curve.get_curve_equations()
+
+            for part in curve_equations:
+                equations.append(part)
+
+        return equations
 
 
     def get_circle_line_equations(self, image):
@@ -101,8 +113,9 @@ class EquationImage:
             x_bounds = utils.calculate_x_bounds(points)
             y_bounds = utils.calculate_y_bounds(points)
 
-            clr = self.get_color(points, image)
-            equations.append(clr)
+            if self.color:
+                clr = self.get_color(points[1], image)
+                equations.append(clr)
 
             if utils.is_collinear(points):
                 # get line if collinear
