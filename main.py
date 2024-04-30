@@ -36,7 +36,7 @@ class EquationImage:
         # self.image = cv.blur(self.image, (5,5))
         # self.image = cv.blur(self.image, (6,6))
         self.image = cv.cvtColor(self.image, cv.COLOR_RGB2GRAY)
-        self.image = cv.Canny(self.image, 30, 50)
+        self.image = cv.Canny(self.image, 40, 80)
 
 
     def display_image(self):

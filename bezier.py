@@ -28,7 +28,11 @@ class bezier():
 
     def calculate_left_control_point(self, p1, p2, p3):
         l13 = np.subtract(p3, p1)
-        unit_vector = l13 / np.linalg.norm(l13)
+
+        if np.linalg.norm(l13) == 0:
+             unit_vector = 0
+        else:
+            unit_vector = l13 / np.linalg.norm(l13)
 
         l12 = np.subtract(p2, p1)
         length_l12 = np.linalg.norm(l12)
@@ -41,7 +45,11 @@ class bezier():
 
     def calculate_right_control_point(self, p1, p2, p3):
         l13 = np.subtract(p3, p1)
-        unit_vector = l13 / np.linalg.norm(l13)
+
+        if np.linalg.norm(l13) == 0:
+             unit_vector = 0
+        else:
+            unit_vector = l13 / np.linalg.norm(l13)
 
         l23 = np.subtract(p3, p2)
         length_l23 = np.linalg.norm(l23)
