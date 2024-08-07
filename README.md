@@ -36,9 +36,7 @@ Calc.setState(state);
 - [Paganini Caprice No. 24 Var. 9 in Desmos](https://youtube.com/shorts/ntZLcAF8ZlY)
 - [...👀](https://youtu.be/1IV0sonB-2U)
 
-
-<img src="https://cdn.discordapp.com/attachments/732666510316666983/1270854071993241671/image.png?ex=66b53696&is=66b3e516&hm=6389231daf22446d718def793b9b13278230c030d9273dfd8204e6c79bf79385&" width="800" height="737" >
-
+![Alt text](https://cdn.discordapp.com/attachments/732666510316666983/1270854071993241671/image.png?ex=66b53696&is=66b3e516&hm=6389231daf22446d718def793b9b13278230c030d9273dfd8204e6c79bf79385&)
 
 
 
