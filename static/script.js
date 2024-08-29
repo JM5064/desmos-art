@@ -5,6 +5,6 @@ document.getElementById('image').addEventListener('change', function (e){
 
 
 async function copyToClipboard() {
-    var copyText = document.querySelector("#equations");
+    let copyText = document.querySelector("#equations");
     await navigator.clipboard.writeText(copyText.textContent);
 }

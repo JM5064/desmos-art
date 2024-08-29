@@ -21,22 +21,18 @@ def get_image(path):
 
 class EquationImage:
 
-    def __init__(self, image, color=True, shift_x=0, shift_y=0, scale_factor=1):
+    def __init__(self, image, color=True, min_val=30, max_val=65, blur=2):
         self.image = image
         self.color = color
-        self.shift_x = shift_x
-        self.shift_y = shift_y
-        self.scale_factor = scale_factor
-
+        self.min_val = min_val
+        self.max_val = max_val
+        self.blur = blur
+    
 
     def process_image(self):
-        # self.image = cv.blur(self.image, (2,3))
-        self.image = cv.blur(self.image, (3,3))
-        # self.image = cv.blur(self.image, (4,4))
-        # self.image = cv.blur(self.image, (5,5))
-        # self.image = cv.blur(self.image, (6,6))
+        self.image = cv.blur(self.image, (self.blur, self.blur))
         self.image = cv.cvtColor(self.image, cv.COLOR_RGB2GRAY)
-        self.image = cv.Canny(self.image, 40, 80)
+        self.image = cv.Canny(self.image, self.min_val, self.max_val)
 
 
     def display_image(self):
@@ -56,8 +52,8 @@ class EquationImage:
     def calculate_circle_points(self, contours):
         points = utils.get_threes(contours, 10)
 
-        points = utils.shift_points(points, self.shift_x, self.shift_y)
-        points = utils.scale_points(points, self.scale_factor)
+        # points = utils.shift_points(points, self.shift_x, self.shift_y)
+        # points = utils.scale_points(points, self.scale_factor)
 
         return points
     
