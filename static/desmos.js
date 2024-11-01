@@ -1,22 +1,35 @@
 let elt = document.getElementById('calculator');
 let calculator = Desmos.GraphingCalculator(elt);
-let imageCount = 451;
+let imageCount = 0;
 
 
 function setBounds() {
     calculator.setMathBounds({ 
-        left: -439.416,
-        right: 1565.192, 
-        bottom: -189.575, 
-        top: 1294.4
+        left: -52.57549,
+        right: 543.70496, 
+        bottom: -88.3414,
+        top: 353.07429
       });
+
 }
 
 setBounds();
+
+setupBezierDefinition();
 let defaultState = calculator.getState();
 let pass = 0;
 let imageChunks = 4;
 let totalTime = 0;
+
+
+function setupBezierDefinition() {
+    calculator.setExpression({ latex: `p_{12}(t, p_a, p_b) = (1-t)p_a+tp_b` });
+    calculator.setExpression({ latex: `p_{23}(t, p_b, p_c) = (1-t)p_b+tp_c` });
+    calculator.setExpression({ latex: `p_{34}(t, p_c, p_d) = (1-t)p_c+tp_d` });
+    calculator.setExpression({ latex: `p_{123}(t, p_a, p_b, p_c) = (1-t)p_{12}(t, p_a, p_b) + tp_{23}(t, p_b, p_c)` });
+    calculator.setExpression({ latex: `p_{234}(t, p_b, p_c, p_d) = (1-t)p_{23}(t, p_b, p_c) + tp_{34}(t, p_c, p_d)` });
+    calculator.setExpression({ latex: `p_{1234}(t, p_a, p_b, p_c, p_d) = (1-t)p_{123}(t, p_a, p_b, p_c) + tp_{234}(t, p_b, p_c, p_d)` });
+}
 
 
 async function drawLines(lines) {
@@ -25,6 +38,10 @@ async function drawLines(lines) {
 
     let start = pass * Math.floor(lines.length / imageChunks);
     let end = (pass + 1) * Math.floor(lines.length / imageChunks);
+
+    if (start == 0) {
+        start = 6;
+    }
 
     for (let i = start; i < end; i++) {
         if (lines[i].startsWith('#')) {
@@ -37,10 +54,8 @@ async function drawLines(lines) {
     pass++;
 
     const elapsedTime = performance.now() - startTime;
-    // console.log("Time: " + elapsedTime);
+    console.log(start + " " + end);
     totalTime += elapsedTime;
-
-    await takeScreenshot();    
 }
 
 
@@ -53,8 +68,13 @@ async function takeScreenshot() {
         "preserveAxisNumers": false
     };
 
-    calculator.asyncScreenshot(opts, downloadImage);
-    await removeLines();
+    await new Promise((resolve) => {
+        calculator.asyncScreenshot(opts, async (result) => {
+            await downloadImage(result);
+            resolve();
+        });
+    })
+    
 }
 
 
@@ -64,14 +84,14 @@ async function downloadImage(imageData) {
     
     img.href = imageData;
 
-    img.download = "LHpizz_" + imageCount + '.png';
+    img.download = "wuv_" + imageCount + '.png';
     imageCount++;
 
     document.body.appendChild(img);
 
     img.click();
 
-    document.body.removeChild(img);    
+    document.body.removeChild(img);  
 }
 
 async function removeLines() {
@@ -95,6 +115,9 @@ async function processEquations() {
 async function processChunk(chunk) {
     for (const equations of chunk) {
         await drawLines(equations);
+        await takeScreenshot();
+        await removeLines();
+
         if (pass > imageChunks - 1) {
             pass = 0;
             console.log("Total Time: " + totalTime);
@@ -103,7 +126,11 @@ async function processChunk(chunk) {
 }
 
 
-for (let i = 0; i < imageChunks; i++) {
-    processEquations();
+async function startProcess() {
+    for (let i = 0; i < imageChunks; i++) {
+        await processEquations();
+    }
 }
+
+startProcess();
 

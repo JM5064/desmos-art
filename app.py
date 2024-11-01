@@ -33,7 +33,6 @@ def run_script():
         result.clear()
 
         image_file = request.files.getlist('image')
-        print(len(image_file))
 
         for image in image_file:
             path = 'temp_path'
