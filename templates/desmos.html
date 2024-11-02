@@ -1,14 +1,17 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <script src="https://www.desmos.com/api/v1.8/calculator.js?apiKey="></script>
+  <script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey="></script>
 
   <div id="calculator" style="width: 99vw; height: 98vh;"></div>
   <script>
-    var equations = `{{ equations | safe }}`
+    let equations = `{{ equations | safe }}`;
     equations = equations.replace(/left/g, '\\left\\');
     equations = equations.replace(/ight/g, '\\\\right\\');
     equations = JSON.parse(equations);
+
+    let widths = JSON.parse(`{{ widths }}`);
+    let heights = JSON.parse(`{{ heights }}`);
   </script>
   
   <script type="application/javascript" src="static/desmos.js"></script>
