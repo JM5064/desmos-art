@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request
-import requests
-from werkzeug.datastructures import FileStorage
-from io import BytesIO
+from PIL import Image
 import json
 import main
 
 app = Flask(__name__, static_url_path='/static')
 result = []
+widths = []
+heights = []
 
 
 @app.route('/')
@@ -22,7 +22,7 @@ def secret():
 @app.route('/desmos')
 def desmos():
     try:
-        return render_template('desmos.html', equations=json.dumps(result))
+        return render_template('desmos.html', equations=json.dumps(result), widths=widths, heights=heights)
     except Exception as e:
         return str(e)
     
@@ -31,6 +31,8 @@ def desmos():
 def run_script():
     try:
         result.clear()
+        widths.clear()
+        heights.clear()
 
         image_file = request.files.getlist('image')
 
@@ -39,13 +41,17 @@ def run_script():
             image.save(path)
 
             image = main.get_image(path)
-
+                
             if image is None:
                 return render_template('index.html')
+            
+            with Image.open(path) as img:
+                width, height = img.size
+                widths.append(width)
+                heights.append(height)
+                print(widths[0], heights[0], "lmao")
 
             equation_image = main.EquationImage(image)
-
-            # equation_image.display_image()
 
             # equations = equation_image.get_circle_line_equations(image)
             equations = equation_image.get_bezier_equations(image)

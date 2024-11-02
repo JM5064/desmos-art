@@ -3,19 +3,9 @@ let calculator = Desmos.GraphingCalculator(elt);
 let imageCount = 0;
 
 
-function setBounds() {
-    calculator.setMathBounds({ 
-        left: -52.57549,
-        right: 543.70496, 
-        bottom: -88.3414,
-        top: 353.07429
-      });
-
-}
-
-setBounds();
-
 setupBezierDefinition();
+setBounds(widths[0], heights[0]);
+
 let defaultState = calculator.getState();
 let pass = 0;
 let imageChunks = 4;
@@ -56,6 +46,40 @@ async function drawLines(lines) {
     const elapsedTime = performance.now() - startTime;
     console.log(start + " " + end);
     totalTime += elapsedTime;
+}
+
+
+async function setBounds(width, height) {
+    let extraWidth = width * 0.05;
+    let extraHeight = height * 0.05;
+    console.log("Width:", width, "Height:", height);
+    let x;
+    let y;
+    
+    let x1 = width + extraWidth;
+    let y1 = x1 * 0.740282;
+
+    let y2 = height + extraHeight;
+    let x2 = y2 * 1.350837;
+
+    if (x1 > x2 && y1 > y2) {
+        x = x1;
+        y = y1;
+    } else {
+        x = x2;
+        y = y2;
+    }
+
+    console.log(x);
+    console.log(y);
+
+
+    calculator.setMathBounds({ 
+        left: -x * 0.5 + width * 0.5,
+        right: x * 0.5 + width * 0.5, 
+        bottom: -y * 0.5 + height * 0.5,
+        top: y * 0.5 + height * 0.5
+      });
 }
 
 
