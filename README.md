@@ -9,8 +9,13 @@ git clone https://github.com/JM5064/desmos-art.git
 cd desmos-art
 ```
 
+Install requirements
+```
+pip install -r requirements.txt
+```
+
 Run Flask app.py
-```python3 app.py```
+```python app.py```
 
 Open web interface at `http://127.0.0.1:5000`
 
